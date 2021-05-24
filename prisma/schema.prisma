@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id      Int      @id @default(autoincrement())
+  email   String   @unique
+  name    String?
+  role    Role     @default(USER)
+  posts   Post[]
+  profile Profile?
+
+  @@map(name: "users")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Profile {
+  id      Int    @id @default(autoincrement())
+  bio     String
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id Int
+
+  @@map(name: "profiles")
+}
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  title     String
+  content   String?
+  createdAt DateTime  @default(now()) @map("created_at")
+  published Boolean   @default(false)
+  author    User      @relation(fields: [author_id], references: [id])
+  author_id Int
+  // Other fields
+  comments  Comment[] // A list of comments
+  //keywords  String[] // A scalar list
+
+  @@map(name: "posts")
+}
+
+model Comment {
+  id      Int    @id @default(autoincrement())
+  title   String
+  post    Post   @relation(fields: [post_id], references: [id])
+  post_id Int
+
+  @@map(name: "comments")
+}
