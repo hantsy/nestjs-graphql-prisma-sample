@@ -38,3 +38,4 @@ migrations/
     └─ migration.sql
 
 Your database is now in sync with your schema.
+

@@ -11,7 +11,7 @@ generator client {
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
+  id      String   @id @default(uuid())
   email   String   @unique
   name    String?
   role    Role     @default(USER)
@@ -27,22 +27,22 @@ enum Role {
 }
 
 model Profile {
-  id      Int    @id @default(autoincrement())
-  bio     String
-  user    User   @relation(fields: [user_id], references: [id])
-  user_id Int
+  id     String @id @default(uuid())
+  bio    String
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique @map("user_id")
 
   @@map(name: "profiles")
 }
 
 model Post {
-  id        Int       @id @default(autoincrement())
+  id        String    @id @default(uuid())
   title     String
   content   String?
   createdAt DateTime  @default(now()) @map("created_at")
-  published Boolean   @default(false)
-  author    User      @relation(fields: [author_id], references: [id])
-  author_id Int
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  author    User?     @relation(fields: [authorId], references: [id])
+  authorId  String?   @map("author_id")
   // Other fields
   comments  Comment[] // A list of comments
   //keywords  String[] // A scalar list
@@ -51,10 +51,10 @@ model Post {
 }
 
 model Comment {
-  id      Int    @id @default(autoincrement())
-  title   String
-  post    Post   @relation(fields: [post_id], references: [id])
-  post_id Int
+  id      String @id @default(uuid())
+  content String
+  post    Post   @relation(fields: [postId], references: [id])
+  postId  String @map("post_id")
 
   @@map(name: "comments")
 }
